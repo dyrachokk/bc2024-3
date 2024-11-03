@@ -7,8 +7,13 @@ program
   .option('-d, --display', 'вивести результат у консоль');
 
 program.parse(process.argv);
-
 const options = program.opts();
+
+
+if (!options.input) {
+  console.error('Please, specify input file');
+  process.exit(1);
+}
 
 
 if (!fs.existsSync(options.input)) {
@@ -16,19 +21,32 @@ if (!fs.existsSync(options.input)) {
   process.exit(1);
 }
 
+try {
+ 
+  const data = JSON.parse(fs.readFileSync(options.input, 'utf8'));
 
-const data = fs.readFileSync(options.input, 'utf8');
+  
+  const results = data.map(entry => {
+    const stockCode = entry.StockCode || 'N/A';  // Використання 'N/A' для відсутніх значень
+    const valCode = entry.ValCode || 'N/A';      // Використання 'N/A' для відсутніх значень
+    const attraction = entry.Attraction || 0;    // Використання 0 для відсутніх значень
+    return `${stockCode}-${valCode}-${attraction}`;
+  });
 
-
-if (options.output) {
-  fs.writeFileSync(options.output, data, 'utf8');
-}
-if (options.display) {
-  console.log(data);
-}
-
-
-if (!options.input) {
-    console.error('Please, specify input file');
-    process.exit(1);
+  
+  if (options.display) {
+    results.forEach(result => console.log(result));
   }
+
+  
+  if (options.output) {
+    fs.writeFileSync(options.output, results.join('\n'), 'utf8');
+  }
+
+} catch (error) {
+  if (error instanceof SyntaxError) {
+    console.error('Error parsing JSON');
+  } else {
+    console.error('An unexpected error occurred:', error.message);
+  }
+}
