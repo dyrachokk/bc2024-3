@@ -27,9 +27,9 @@ try {
 
   
   const results = data.map(entry => {
-    const stockCode = entry.StockCode || 'N/A';  // Використання 'N/A' для відсутніх значень
-    const valCode = entry.ValCode || 'N/A';      // Використання 'N/A' для відсутніх значень
-    const attraction = entry.Attraction || 0;    // Використання 0 для відсутніх значень
+    const stockCode = entry.StockCode || 'N/A';  
+    const valCode = entry.ValCode || 'N/A';      
+    const attraction = entry.Attraction || 0;    
     return `${stockCode}-${valCode}-${attraction}`;
   });
 
